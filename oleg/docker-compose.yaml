@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+#  front:
+#    container_name: front
+#    build: front
+#    ports:
+#      - 1080:80
+#    networks:
+#      - realtime
+
+  back:
+    container_name: back
+    build: back
+    ports:
+      - "8000:8000"
+    env_file:
+      - real_time.env
+    networks:
+      - realtime
+
+  telebot:
+    build: telebot
+    env_file:
+      - real_time.env
+    networks:
+      - realtime
+
+networks:
+  realtime: { }
