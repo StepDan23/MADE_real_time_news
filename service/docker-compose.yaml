@@ -13,6 +13,8 @@ services:
     container_name: back
     hostname: back
     build: back
+    env_file:
+      - real_time.env
     ports:
       - "8000:8000"
     networks:
@@ -33,13 +35,13 @@ services:
       - realtime
 
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.8.9-management
     hostname: rabbitmq
     container_name: rabbitmq
     volumes:
-      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+      - ./rabbitmq/data/:/var/lib/rabbitmq/
+      - ./rabbitmq/log/:/var/log/rabbitmq/
+      - ./rabbitmq/etc/:/etc/rabbitmq/
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
