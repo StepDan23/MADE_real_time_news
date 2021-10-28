@@ -46,16 +46,17 @@ async def get_news(message: types.Message):
     """
     try:
         async with aiohttp.ClientSession(
-                timeout=aiohttp.ClientTimeout(total=TIMEOUT)
-            ) as session:
+            timeout=aiohttp.ClientTimeout(total=TIMEOUT)
+        ) as session:
             response = await asyncio.create_task(get_back_response(session, BACK_URL))
-            news = [item['title'] for item in response['news']['articles']]
+            news = [item['title'] for item in response]
+            sources = [item['source'] for item in response]
             logging.info(news[0])
-            for text in news:
+            for text, source in zip(news, sources):
                 answer = parse_answer(text, MAX_TELEGRAM_MESSAGE_LENGTH)
                 for part in answer:
                     if len(part) > 0:
-                        await message.answer(part)
+                        await message.answer(f"[{source}] " + part)
     except Exception as e:
         logging.error(e)
         await message.answer(ERROR_MESSAGE)

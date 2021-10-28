@@ -1,0 +1,78 @@
+version: "3.7"
+
+services:
+#  front:
+#    container_name: front
+#    build: front
+#    ports:
+#      - 1080:80
+#    networks:
+#      - realtime
+
+  back:
+    container_name: back
+    hostname: back
+    build: back
+    ports:
+      - "8000:8000"
+    
+    env_file:
+      - real_time.env
+    depends_on:
+      - rabbitmq
+
+  telebot:
+    build: telebot
+    env_file:
+      - real_time.env
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbitmq
+    container_name: rabbitmq
+    volumes:
+        - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+        - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+        - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+        RABBITMQ_DEFAULT_USER: admin
+        RABBITMQ_DEFAULT_PASS: admin
+    ports:
+        - 5672:5672
+        - 15672:15672
+  
+  mongo:
+    image: mongo:4.2.3-bionic
+    hostname: mongodb
+    container_name: mongodb
+    ports:
+        - 27018:27017
+    volumes:
+        - mongodb:/data/db
+  
+  crawler:
+    container_name: crawler
+    build: crawlers
+    environment:
+      RABBIT_HOSTNAME: rabbitmq
+    ports:
+        - 8020:8020
+    depends_on:
+      - rabbitmq
+  
+  crawler_consumer:
+    container_name: crawler_consumer
+    build: crawlers_consumer
+    environment:
+      RABBIT_HOSTNAME: rabbitmq
+      MONGO_HOSTNAME: mongodb
+    depends_on: 
+      - mongo
+      - rabbitmq
+    restart: always
+    
+volumes:
+    mongodb:
+
+networks:
+  { }
