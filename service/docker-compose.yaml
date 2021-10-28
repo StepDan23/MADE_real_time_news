@@ -15,31 +15,39 @@ services:
     build: back
     ports:
       - "8000:8000"
+    networks:
+      - realtime
     
     env_file:
       - real_time.env
     depends_on:
       - rabbitmq
+    networks:
+      - realtime
 
   telebot:
     build: telebot
     env_file:
       - real_time.env
+    networks:
+      - realtime
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
     hostname: rabbitmq
     container_name: rabbitmq
     volumes:
-        - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
-        - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
-        - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
     environment:
-        RABBITMQ_DEFAULT_USER: admin
-        RABBITMQ_DEFAULT_PASS: admin
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
     ports:
-        - 5672:5672
-        - 15672:15672
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - realtime
   
   mongo:
     image: mongo:4.2.3-bionic
@@ -49,6 +57,8 @@ services:
         - 27018:27017
     volumes:
         - mongodb:/data/db
+    networks:
+      - realtime
   
   crawler:
     container_name: crawler
@@ -59,6 +69,8 @@ services:
         - 8020:8020
     depends_on:
       - rabbitmq
+    networks:
+      - realtime
   
   crawler_consumer:
     container_name: crawler_consumer
@@ -70,9 +82,11 @@ services:
       - mongo
       - rabbitmq
     restart: always
+    networks:
+      - realtime
     
 volumes:
     mongodb:
 
 networks:
-  { }
+  realtime: { }
