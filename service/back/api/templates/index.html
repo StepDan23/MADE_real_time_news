@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <link rel="stylesheet" href="https://fonts.google.com/specimen/Manrope">
+
+  <title>News | Agg example</title>
+
+</head>
+<style>
+    body {
+    background: hsl(210, 46%, 95%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.preview {
+    background: white;
+    grid-template-columns: 40% 1fr;
+    grid-gap: 20px;
+    width: 600px;
+    border-radius: 10px;
+    box-shadow: 10px;
+    background-size: cover;
+    height: 120px; /*100%*/
+    border-bottom-left-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.right-preview {
+    font-size: 13px;
+    padding: 20px;
+    font-family: 'Manrope', sans-serif;
+    color: hsl(214, 17%, 51%);
+    font-weight: 500;
+}
+
+.right-preview h2 {
+    color: hsl(217, 19%, 35%);
+    position: relative;
+    top: -24px;
+    font-weight: 700;
+}
+
+.right-preview p {
+    line-height: 20px;
+    padding-bottom: 10px;
+    position: relative;
+    bottom: 30px;
+    text-align: right
+}
+
+.preview p {
+    line-height: 20px;
+    font-size: 15px;
+    position: relative;
+    bottom: 70px;
+    right: 8px;
+    text-align: right;
+}
+
+.author {
+    display: grid;
+    grid-template-columns: 50px 1fr 50px;
+    grid-gap: 10px;
+}
+
+.name h4{
+    background: hsl(9, 56%, 70%);
+    width: 74px;
+    border-radius: 10px;
+    box-shadow: 10px;
+    height: 18px;
+    background-size: cover;
+    color: hsl(217, 19%, 35%);
+    font-weight: 700;
+    margin: 0px;
+    padding-top: 0px;
+}
+
+.name p {
+    margin: 0px;
+}
+
+.avatar img {
+    border-radius: 100%;
+    width: 40px;
+}
+
+.share-icon {
+    transform: translateY(7px) translateX(7px);
+}
+
+.popuptext {
+    display: flex;
+}
+
+.popuptext img {
+    padding: 2px;
+    margin-top: 5px;
+    margin-left: 2px;
+}
+
+.popuptext p {
+    padding: 3px;
+    margin-top: 15px;
+    margin-left: 10px;
+}
+
+.popup {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    background: hsl(210, 46%, 95%);
+    border-radius: 100%;
+    width: 30px;
+    height: 30px;
+}
+
+.popup img {
+    transform: translateX(7px) translateY(7px);
+}
+
+table.modified td {
+  margin: 12px 12px 12px 12px;
+  padding: 6px 6px 6px 6px;
+}
+
+table.modified {
+  border-collapse: separate;
+  border-spacing: 10px;
+  *border-collapse: expression('separate', cellSpacing='10px');
+}
+</style>
+<body>
+<table class="modified">
+    {% for para in news %}
+        <tr>
+        {% for elem in para %}
+        <td style="text-align:center">
+            <div class="preview">
+                <table>
+                    <td>
+                        <div class="name">
+                            <h4>{{ elem[1] }}</h4>
+                        </div>
+                    </td>
+                     <td>
+                        <div class="name">
+                            <h4>{{ elem[2] }}</h4>
+                        </div>
+                    </td>
+                </table>
+                <div class="right-preview">
+                    <div>
+                        <h2>{{ elem[0] }}</h2>
+                    </div>
+                </div>
+                <p><a href={{ elem[3] }}>Source</a></p>
+            </div>
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>
