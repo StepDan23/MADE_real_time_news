@@ -56,24 +56,11 @@ class Producer:
         channel.queue_declare(
             queue='news'
         )
-        hot_channel.queue_declare(
-            queue='hot',
-        )
         self.logger.info("msg with id %s transferred to queus" % msg_id)
         channel.basic_publish(
             exchange='',
             routing_key='news',
             body=msg
         )
-        hot_channel.basic_publish(
-            exchange='',
-            routing_key='hot',
-            body=msg,
-            properties=pika.BasicProperties(
-                expiration='300000',
-            ),
-        )
-        hot_channel.close()
         channel.close()
         connection.close()
-       

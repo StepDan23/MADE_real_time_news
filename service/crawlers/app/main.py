@@ -24,11 +24,11 @@ SOURCES = {
         rss_link='https://meduza.io/rss2/all',
         timeout=60,
     ),
-    # 'lenta': RssConfig(
-    #     source_name='lenta.ru',
-    #     rss_link='https://lenta.ru/rss/news',
-    #     timeout=75
-    # ),
+    'lenta': RssConfig(
+        source_name='lenta.ru',
+        rss_link='https://lenta.ru/rss/news',
+        timeout=75
+    ),
     'ria': RssConfig(
         source_name='ria.ru',
         rss_link='http://static.feed.rbc.ru/rbc/logical/footer/news.rss',
