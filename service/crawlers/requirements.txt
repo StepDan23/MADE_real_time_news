@@ -28,3 +28,5 @@ typing-extensions==3.10.0.2
 uvicorn==0.15.0
 wrapt==1.13.2
 zipp==3.6.0
+Scrapy==2.5.1
+Twisted==21.7.0

@@ -9,6 +9,7 @@ from cachetools.keys import hashkey
 
 from .entities.response import RssConfig
 from .entities.queue import RabbitConfig
+from .entities.spiders import run_spider
 
 
 class Producer:
@@ -16,6 +17,7 @@ class Producer:
         self.rss_link = config.rss_link
         self.source = config.source_name
         self.timeout = config.timeout
+        self.spider = config.spider
         self.queue_config = queue_config
         self.logger = logger
         self.logger.info("Init correct!")
@@ -33,10 +35,13 @@ class Producer:
         while True:
             news_feed = feedparser.parse(self.rss_link)
             for news in news_feed.entries:
+                self.spider.set_url(news.link)
+                news_text = run_spider(self.spider)
                 self._add_to_queue(
                     json.dumps({
                         'title': news.title.encode('utf-8').decode(),
                         'link': news.link,
+                        'text': news_text,
                         'id': news.id,
                         'summary': news.summary,
                         'source': self.source,
@@ -56,7 +61,7 @@ class Producer:
         channel.queue_declare(
             queue='news'
         )
-        self.logger.info("msg with id %s transferred to queus" % msg_id)
+        self.logger.info("msg with id %s transferred to queues" % msg_id)
         channel.basic_publish(
             exchange='',
             routing_key='news',

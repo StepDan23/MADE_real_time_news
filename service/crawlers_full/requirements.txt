@@ -1,2 +1,0 @@
-Scrapy==2.5.1
-uvicorn==0.15.0
