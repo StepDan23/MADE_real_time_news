@@ -12,6 +12,7 @@ from app.core.entities.queue import RabbitConfig
 from app.core.entities.response import RssConfig
 from app.core.feed import Producer
 from app.core.entities.log_config import LogConfig
+from app.core.entities.spiders import TassNewsSpider, LentaNewsSpider, RiaNewsSpider, GazetaNewsSpider, MeduzaNewsSpider
 
 
 dictConfig(LogConfig().dict())
@@ -23,26 +24,31 @@ SOURCES = {
         source_name='meduza.io',
         rss_link='https://meduza.io/rss2/all',
         timeout=60,
+        spider=MeduzaNewsSpider,
     ),
     'lenta': RssConfig(
         source_name='lenta.ru',
         rss_link='https://lenta.ru/rss/news',
-        timeout=75
+        timeout=75,
+        spider=LentaNewsSpider,
     ),
     'ria': RssConfig(
         source_name='ria.ru',
         rss_link='http://static.feed.rbc.ru/rbc/logical/footer/news.rss',
         timeout=65,
+        spider=RiaNewsSpider,
     ),
     'tass': RssConfig(
         source_name='tass.ru',
         rss_link='http://tass.ru/rss/v2.xml',
         timeout=50,
+        spider=TassNewsSpider,
     ),
     'gazeta': RssConfig(
         source_name='gazeta.ru',
         rss_link='https://www.gazeta.ru/export/rss/first.xml',
-        timeout=60
+        timeout=60,
+        spider=GazetaNewsSpider,
     )
 }
 

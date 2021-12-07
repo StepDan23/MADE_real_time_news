@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from scrapy import Spider
 
 
 class RssConfig(BaseModel):
@@ -6,4 +7,5 @@ class RssConfig(BaseModel):
     source_name: str
     rss_link: str
     timeout: int
+    spider: Spider
 
