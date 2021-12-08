@@ -10,6 +10,7 @@ from dash.dependencies import Input, Output
 
 from .consts import SOURCES, LABELS
 
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 MONGO_HOSTNAME = os.environ.get('MONGO_HOSTNAME', 'localhost')
@@ -21,10 +22,10 @@ database_connection = pymongo.MongoClient(CONNECTIONS_STRING, serverSelectionTim
 
 
 # TO DO сделать multi select
-def create_dash_app(routes_pathname_prefix: str = None) -> dash.Dash:
+def create_dash_app(requests_pathname_prefix: str = None) -> dash.Dash:
     server = flask.Flask(__name__)
 
-    app = dash.Dash(__name__, server=server, routes_pathname_prefix=routes_pathname_prefix)
+    app = dash.Dash(__name__, server=server, requests_pathname_prefix=requests_pathname_prefix)
 
     app.scripts.config.serve_locally = False
     dcc._js_dist[0]['external_url'] = 'https://cdn.plot.ly/plotly-basic-latest.min.js'
