@@ -2,19 +2,19 @@
 This app is voting classifier asking several NLU models with user text message, receiving answer of each model,
 weighting them and giving final answer
 """
-import os
 import json
-from cachetools import TTLCache
-import pymongo
 import logging
+import os
+
 import aiohttp
-import pika
+import pymongo
+from api.dashapp import create_dash_app
+from cachetools import TTLCache
 from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
+from fastapi.middleware.wsgi import WSGIMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
-from api.http_dto.res import ResponseOut
-
+from fastapi.templating import Jinja2Templates
 
 TIMEOUT = 60
 MONGO_HOSTNAME = os.environ.get('MONGO_HOSTNAME', 'localhost')
@@ -29,6 +29,8 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
+dash_app = create_dash_app(routes_pathname_prefix="/dash/")
+app.mount("/", WSGIMiddleware(dash_app.server))
 
 templates = Jinja2Templates(directory="templates")
 
@@ -39,7 +41,9 @@ def _get_last_news():
     collection = database.get_collection("posts")
     result = list(collection.find().limit(10).sort([("_id", pymongo.DESCENDING)]))
     logger.info(result)
+    collection.aggregate()
     mongo.close()
+    [{"$group": {"_id": "$title", "total": {"$sum": 1}}}]
     [elem.pop('_id') for elem in result]
     return result
 

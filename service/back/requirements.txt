@@ -6,3 +6,6 @@ pika==1.2.0
 pymongo==3.12.1
 jinja2==3.0.3
 aiofiles
+dash
+pandas
+flask

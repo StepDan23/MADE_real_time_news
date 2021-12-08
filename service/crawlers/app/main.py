@@ -36,13 +36,103 @@ SOURCES = {
     ),
     'tass': RssConfig(
         source_name='tass.ru',
-        rss_link='http://tass.ru/rss/v2.xml',
+        rss_link='http://www.itar-tass.com/rss/all.xml',
         timeout=50,
     ),
     'gazeta': RssConfig(
         source_name='gazeta.ru',
         rss_link='https://www.gazeta.ru/export/rss/first.xml',
         timeout=60
+    ),
+    'rbk': RssConfig(
+        source_name='rbk',
+        rss_link='http://static.feed.rbc.ru/rbc/internal/rss.rbc.ru/rbc.ru/mainnews.rss',
+        timeout=90
+    ),
+    'russian_rt': RssConfig(
+        source_name='russian_rt',
+        rss_link='https://russian.rt.com/rss',
+        timeout=75
+    ),
+    'fontanka': RssConfig(
+        source_name='fontanka',
+        rss_link='http://www.fontanka.ru/fontanka.rss',
+        timeout=60
+    ),
+    'tj': RssConfig(
+        source_name='tj',
+        rss_link='http://tjournal.ru/rss',
+        timeout=60
+    ),
+    'life': RssConfig(
+        source_name='life',
+        rss_link='https://life.ru/rss',
+        timeout=75
+    ),
+    'aif': RssConfig(
+        source_name='aif',
+        rss_link='http://www.aif.ru/rss/news.php',
+        timeout=60
+    ),
+    'yanews': RssConfig(
+        source_name='yanews',
+        rss_link='http://news.yandex.ru/index.rss',
+        timeout=60
+    ),
+    'bbc': RssConfig(
+        source_name='bbc',
+        rss_link='http://www.bbc.co.uk/russian/index.xml',
+        timeout=60
+    ),
+    'vz': RssConfig(
+        source_name='vz',
+        rss_link='http://www.vz.ru/rss.xml',
+        timeout=75
+    ),
+    'vesti': RssConfig(
+        source_name='vesti',
+        rss_link='http://www.vesti.ru/vesti.rss',
+        timeout=60
+    ),
+    'echo_msk': RssConfig(
+        source_name='echo_msk',
+        rss_link='http://echo.msk.ru/news.rss',
+        timeout=70
+    ),
+    'interfax': RssConfig(
+        source_name='intefrax',
+        rss_link='http://www.interfax.ru/rss.asp',
+        timeout=60
+    ),
+    'izvestia': RssConfig(
+        source_name='izvestia',
+        rss_link='http://izvestia.ru/xml/rss/all.xml',
+        timeout=65
+    ),
+    'rambler': RssConfig(
+        source_name='rambler',
+        rss_link='http://news.rambler.ru/rss/head/',
+        timeout=70
+    ),
+    'rg': RssConfig(
+        source_name='rg',
+        rss_link='http://www.rg.ru/xml/index.xml',
+        timeout=70
+    ),
+    'kp': RssConfig(
+        source_name='rg',
+        rss_link='http://kp.ru/rss/allsections.xml',
+        timeout=70
+    ),
+    'kommersant': RssConfig(
+        source_name='kommersant',
+        rss_link='http://www.kommersant.ru/rss/main.xml',
+        timeout=70
+    ),
+    'vedomosti': RssConfig(
+        source_name='vedomosti',
+        rss_link='http://www.vedomosti.ru/newspaper/out/rss.xml"',
+        timeout=70
     )
 }
 
