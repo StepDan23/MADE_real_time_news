@@ -1,14 +1,6 @@
 version: "3.7"
 
 services:
-#  front:
-#    container_name: front
-#    build: front
-#    ports:
-#      - 1080:80
-#    networks:
-#      - realtime
-
   back:
     container_name: back
     hostname: back
@@ -19,20 +11,15 @@ services:
       - "8000:8000"
     networks:
       - realtime
-    
-    env_file:
-      - real_time.env
     depends_on:
       - rabbitmq
-    networks:
-      - realtime
 
-  telebot:
-    build: telebot
-    env_file:
-      - real_time.env
-    networks:
-      - realtime
+#  telebot:
+#    build: telebot
+#    env_file:
+#      - real_time.env
+#    networks:
+#      - realtime
 
   rabbitmq:
     image: rabbitmq:3.8.9-management
@@ -50,7 +37,7 @@ services:
       - 15672:15672
     networks:
       - realtime
-  
+
   mongo:
     image: mongo:4.2.3-bionic
     hostname: mongodb
@@ -73,14 +60,14 @@ services:
       - rabbitmq
     networks:
       - realtime
-  
+
   crawler_consumer:
     container_name: crawler_consumer
     build: crawlers_consumer
     environment:
       RABBIT_HOSTNAME: rabbitmq
       MONGO_HOSTNAME: mongodb
-    depends_on: 
+    depends_on:
       - mongo
       - rabbitmq
     restart: always

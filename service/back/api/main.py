@@ -33,46 +33,25 @@ app.mount("/dash", WSGIMiddleware(dash_app.server))
 templates = Jinja2Templates(directory="templates")
 
 
-def _get_last_news():
-    mongo = pymongo.MongoClient(CONNECTIONS_STRING, serverSelectionTimeoutMS=5000)
+def _get_last_news(batch_size, n_offset):
+    mongo = pymongo.MongoClient(CONNECTIONS_STRING, serverSelectionTimeoutMS=3000)
     database = mongo.get_database("test")
     collection = database.get_collection("posts")
-    result = list(collection.find().limit(10).sort([("_id", pymongo.DESCENDING)]))
-    logger.info(result)
+    result = list(collection.find().sort([("_id", pymongo.DESCENDING)]).skip(n_offset).limit(batch_size))
+    logger.info(result[0])
     mongo.close()
     [elem.pop('_id') for elem in result]
     return result
 
 
-def get_news_from_api():
-    # q_len = 0
-    # if q_len < 10:
-    #     logger.info("Not enough items in queue %s" % q_len)
-    #     if not cache.get('mongo_news'):
-    #         logger.info("Query to mongo.")
-    #         cache['mongo_news'] = _get_last_news()
-    #     logger.info("Return cached.")
-    #     return cache['mongo_news']
-    
-    return _get_last_news()
-
-
 @app.get('/api/get_news')
-async def get_latest_news():
-    news = get_news_from_api()
+async def get_news(batch_size: int = 30, n_offset: int = 0):
+    logger.info("Get {} news, with offset: {}".format(batch_size, n_offset))
+    news = _get_last_news(batch_size, n_offset)
     return news
 
 
 @app.get("/", response_class=HTMLResponse)
-async def read_item(request: Request):
-    news = await get_latest_news()
-    buffer = []
-    processed_news = []
-    for idx, post in enumerate(news):
-        if idx % 2 == 0 and idx != 0:
-            processed_news.append(buffer[:])
-            buffer.clear()
-        buffer.append([post['title'], post['predicted_class'], post['source'], post['link']])
-
-    logger.info(news)
-    return templates.TemplateResponse("index.html", {'request': request, 'news': processed_news})
+async def root(request: Request):
+    return templates.TemplateResponse("news_feed.html",
+                                      {'request': request, 'title': 'News feed'})
