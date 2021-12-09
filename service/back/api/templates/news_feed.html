@@ -7,7 +7,10 @@
 
     <script>
         let ul = document.querySelector('ul')
-        let n = 30
+        {#let first_li = document.createElement('li')#}
+        {#ul.appendChild(first_li)#}
+        let n = 0
+        let n_size = 20
         url = "/api/get_news?"
 
         function createNewsCard(newsCard) {
@@ -21,14 +24,12 @@
             div_title.appendChild(title)
             var pred_tag = document.createElement('span')
             pred_tag.className = "badge badge-primary badge-pill"
-            {#pred_tag.style = "background: #ea715a; border-radius: 4px;"#}
             pred_tag.appendChild(document.createTextNode(newsCard.predicted_class))
             div_title.appendChild(pred_tag)
 
 
             var summary = document.createElement('p')
             summary.className = "mb-1"
-            {#summary.appendChild(document.createTextNode(newsCard.summary))#}
             summary.innerHTML = newsCard.summary
 
             var date = document.createElement('small')
@@ -42,13 +43,12 @@
         }
 
         function createLi() {
-
-            fetch(url + new URLSearchParams({n_offset: n})).then(function (response) {
+            fetch(url + new URLSearchParams({n_offset: n, batch_size: n_size})
+            ).then(function (response) {
                 if (response.ok) {
                     return response.json();
                 }
             }).then((data) => {
-                console.log(data)
                 data.forEach(newsCard => {
                     n += 1
                     var li = document.createElement('li')
@@ -57,7 +57,6 @@
                     ul.append(li)
                 })
             });
-
         }
 
         let observer = new IntersectionObserver((entries, observer) => {
@@ -69,7 +68,7 @@
                 observer.observe(document.querySelector('li:last-child'))
             })
         }, {
-            threshold: 1
+            threshold: 1.0
         })
 
         observer.observe(document.querySelector('li'))

@@ -38,7 +38,7 @@ def _get_last_news(batch_size, n_offset):
     database = mongo.get_database("test")
     collection = database.get_collection("posts")
     result = list(collection.find().sort([("_id", pymongo.DESCENDING)]).skip(n_offset).limit(batch_size))
-    logger.info(result)
+    logger.info(result[0])
     mongo.close()
     [elem.pop('_id') for elem in result]
     return result
@@ -46,7 +46,7 @@ def _get_last_news(batch_size, n_offset):
 
 @app.get('/api/get_news')
 async def get_news(batch_size: int = 30, n_offset: int = 0):
-    logger.info("Get {} news, with offset: {}", batch_size, n_offset)
+    logger.info("Get {} news, with offset: {}".format(batch_size, n_offset))
     news = _get_last_news(batch_size, n_offset)
     return news
 
