@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <ul class="list-group">
+        <li></li>
+    </ul>
+
+    <script>
+        let ul = document.querySelector('ul')
+        let n = 30
+        url = "/api/get_news?"
+
+        function createNewsCard(newsCard) {
+            var card = document.createElement('div')
+
+            var div_title = document.createElement('div')
+            div_title.className = "d-flex w-100 justify-content-between"
+            var title = document.createElement('h5')
+            title.className = "mb-1"
+            title.appendChild(document.createTextNode(newsCard.title));
+            div_title.appendChild(title)
+            var pred_tag = document.createElement('span')
+            pred_tag.className = "badge badge-primary badge-pill"
+            {#pred_tag.style = "background: #ea715a; border-radius: 4px;"#}
+            pred_tag.appendChild(document.createTextNode(newsCard.predicted_class))
+            div_title.appendChild(pred_tag)
+
+
+            var summary = document.createElement('p')
+            summary.className = "mb-1"
+            {#summary.appendChild(document.createTextNode(newsCard.summary))#}
+            summary.innerHTML = newsCard.summary
+
+            var date = document.createElement('small')
+            date.appendChild(document.createTextNode(newsCard.parsed_datetime))
+
+            card.appendChild(div_title)
+            card.appendChild(summary)
+            card.appendChild(date)
+
+            return card;
+        }
+
+        function createLi() {
+
+            fetch(url + new URLSearchParams({n_offset: n})).then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                }
+            }).then((data) => {
+                console.log(data)
+                data.forEach(newsCard => {
+                    n += 1
+                    var li = document.createElement('li')
+                    li.className = "list-group-item list-group-item-action flex-column align-items-start"
+                    li.appendChild(createNewsCard(newsCard))
+                    ul.append(li)
+                })
+            });
+
+        }
+
+        let observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    createLi()
+                }
+                observer.unobserve(entry.target)
+                observer.observe(document.querySelector('li:last-child'))
+            })
+        }, {
+            threshold: 1
+        })
+
+        observer.observe(document.querySelector('li'))
+    </script>
+{% endblock %}

@@ -25,12 +25,23 @@ database_connection = pymongo.MongoClient(CONNECTIONS_STRING, serverSelectionTim
 def create_dash_app(requests_pathname_prefix: str = None) -> dash.Dash:
     server = flask.Flask(__name__)
 
-    app = dash.Dash(__name__, server=server, requests_pathname_prefix=requests_pathname_prefix)
+    external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css']
+    app = dash.Dash(__name__, server=server,
+                    requests_pathname_prefix=requests_pathname_prefix,
+                    external_stylesheets=external_stylesheets)
 
     app.scripts.config.serve_locally = False
     dcc._js_dist[0]['external_url'] = 'https://cdn.plot.ly/plotly-basic-latest.min.js'
 
     app.layout = html.Div([
+        html.Nav(className="navbar is-dark", children=[
+            html.Div(id="navbarTransparent", className="navbar-menu", children=[
+                html.Div(className="navbar-start", children=[
+                    html.A('News feed', className="navbar-item", href='/'),
+                    html.A('Statistic', className="navbar-item", href='/dash')
+                ])
+            ])
+        ]),
         html.H1('5-minutes graph from source'),
         dcc.Dropdown(
             id='source dropdown',
