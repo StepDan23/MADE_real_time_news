@@ -55,3 +55,9 @@ async def get_news(batch_size: int = 30, n_offset: int = 0):
 async def root(request: Request):
     return templates.TemplateResponse("news_feed.html",
                                       {'request': request, 'title': 'News feed'})
+
+
+@app.get("/news_clustering", response_class=HTMLResponse)
+async def news_clustering(request: Request):
+    return templates.TemplateResponse("news_clustering.html",
+                                      {'request': request, 'title': 'News feed'})

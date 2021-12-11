@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{#    fetch('http://example.com/movies.json')#}
+{#    .then(response => response.json())#}
+{#    .then(data => {#}
+{#    source.data = {#}
+{#    titles: response['titles'],#}
+{#    stars: response['stars'],#}
+{#    }#}
+{#    });#}
+    <script>
+        const plt = Bokeh.Plotting;
+
+        function createNewsCard(newsCard) {
+
+        }
+        // set up some data
+        const M = 100;
+        const xx = [];
+        const yy = [];
+        const colors = [];
+        const radii = [];
+        for (let y = 0; y <= M; y += 4) {
+            for (let x = 0; x <= M; x += 4) {
+                xx.push(x);
+                yy.push(y);
+                colors.push(plt.color(50 + 2 * x, 30 + 2 * y, 150));
+                radii.push(Math.random() * 0.4 + 1.7)
+            }
+        }
+
+        // create a data source
+        const source = new Bokeh.ColumnDataSource({
+            data: {x: xx, y: yy, radius: radii, colors: colors}
+        });
+
+        // make the plot and add some tools
+        const tools = "pan,crosshair,wheel_zoom,box_zoom,reset,save";
+        const p = plt.figure({title: "Colorful Scatter", tools: tools});
+
+        // call the circle glyph method to add some circle glyphs
+        const circles = p.circle({field: "x"}, {field: "y"}, {
+            source: source,
+            radius: radii,
+            fill_color: colors,
+            fill_alpha: 0.6,
+            line_color: null
+        });
+
+        // show the plot
+        plt.show(p);
+        console.log('here')
+    </script>
+{% endblock %}
