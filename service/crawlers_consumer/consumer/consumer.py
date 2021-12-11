@@ -6,6 +6,10 @@ import fasttext
 import pyonmttok
 from collections import defaultdict
 from datetime import datetime
+from transformers import AutoTokenizer, AutoModel
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from clustering import cluster_job
 
 import json
 
@@ -23,6 +27,9 @@ credentials = pika.PlainCredentials('admin', 'admin')
 
 tokenizer = pyonmttok.Tokenizer("conservative", joiner_annotate=False)
 model = fasttext.load_model("ru_cat.ftz")
+
+cluster_tokenizer = AutoTokenizer.from_pretrained("cointegrated/rubert-tiny")
+cluster_model = AutoModel.from_pretrained("cointegrated/rubert-tiny")
 
 
 def preprocess(text):
@@ -67,6 +74,16 @@ def create_timesplite(db, time_split_cache, time):
     else:
         logging.info("empty dict")
     return True
+
+
+def print_hi():
+    logger.info("print hi")
+
+
+logger.info("print init scheduler")
+scheduler = BackgroundScheduler()
+scheduler.start()
+scheduler.add_job(cluster_job, 'interval', args=[cluster_model, cluster_tokenizer, mongo[DATABASE]], minutes=5)
 
 
 cache = []
@@ -114,3 +131,6 @@ with pika.BlockingConnection(pika.ConnectionParameters(RABBIT_HOSTNAME, credenti
     
     channel.basic_consume(queue='news', on_message_callback=callback, auto_ack=True)
     channel.start_consuming()
+
+
+
