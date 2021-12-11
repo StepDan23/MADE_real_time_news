@@ -47,7 +47,7 @@ class Producer:
             self.logger.info(f"Batch with {len(news_feed.entries)} from {self.source}")
             time.sleep(self.timeout)
 
-    @cached(cache=LFUCache(maxsize=256), key=lambda self, msg, msg_id: hashkey(msg_id))
+    @cached(cache=LFUCache(maxsize=1024), key=lambda self, msg, msg_id: hashkey(msg_id))
     def _add_to_queue(self, msg, msg_id):
         """ Добавление сообщения в очередь с хешированием по id. """
         connection = self._queue_connection()
