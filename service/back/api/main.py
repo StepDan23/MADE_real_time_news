@@ -33,12 +33,12 @@ app.mount("/dash", WSGIMiddleware(dash_app.server))
 templates = Jinja2Templates(directory="templates")
 
 
-def _get_last_news(batch_size, n_offset):
+def _get_data_from_mongo(batch_size, n_offset, table_name, db_name="test"):
     mongo = pymongo.MongoClient(CONNECTIONS_STRING, serverSelectionTimeoutMS=3000)
-    database = mongo.get_database("test")
-    collection = database.get_collection("posts")
+    database = mongo.get_database(db_name)
+    collection = database.get_collection(table_name)
     result = list(collection.find().sort([("_id", pymongo.DESCENDING)]).skip(n_offset).limit(batch_size))
-    logger.info(result[0])
+    logger.info("Get {} records with offset {} from {}, result {}".format(batch_size, n_offset, table_name, result[0]))
     mongo.close()
     [elem.pop('_id') for elem in result]
     return result
@@ -46,8 +46,13 @@ def _get_last_news(batch_size, n_offset):
 
 @app.get('/api/get_news')
 async def get_news(batch_size: int = 30, n_offset: int = 0):
-    logger.info("Get {} news, with offset: {}".format(batch_size, n_offset))
-    news = _get_last_news(batch_size, n_offset)
+    news = _get_data_from_mongo(batch_size, n_offset, table_name="posts")
+    return news
+
+
+@app.get('/api/get_news_clusters')
+def get_news_clusters(batch_size: int = 100):
+    news = _get_data_from_mongo(batch_size, n_offset=0, table_name="tsne")
     return news
 
 
