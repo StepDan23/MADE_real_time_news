@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <script>
+        const plt = Bokeh.Plotting;
+        const M = 600;
+        const xx = [];
+        const yy = [];
+        const sources = [];
+        const labels = [];
+        const url = "/api/get_news_clusters?"
+
+
+        fetch(url + new URLSearchParams({
+            batch_size: M
+        })).then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+        }).then((response) => {
+            response.forEach(newsCard => {
+                xx.push(newsCard['tsne_x']);
+                yy.push(newsCard['tsne_y']);
+                sources.push(newsCard['source']);
+                labels.push(newsCard['title']);
+            })
+        }).then(foo => {
+            const p = plt.figure({
+                title: "Кластеризация новостей",
+                tools: "pan,wheel_zoom,box_zoom,reset,save",
+                height: 800,
+                width: 800
+            });
+            const source = new Bokeh.ColumnDataSource({
+                data: {x: xx, y: yy, label: labels, source: sources}
+            });
+            const circles = p.circle({field: "x"}, {field: "y"}, {
+                source: source,
+                radius: 0.15,
+                fill_color: plt.color(50, 30, 150),
+                fill_alpha: 0.4,
+            });
+            const hover = new Bokeh.HoverTool({
+                renderers: [circles],
+                tooltips: ("<div>[@source]:@label</div>")
+            });
+
+            p.add_tools(hover);
+            plt.show(p);
+        })
+    </script>
+{% endblock %}

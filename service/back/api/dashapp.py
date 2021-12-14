@@ -121,6 +121,7 @@ def create_dash_app(requests_pathname_prefix: str = None) -> dash.Dash:
             html.Div(id="navbarTransparent", className="navbar-menu", children=[
                 html.Div(className="navbar-start", children=[
                     html.A('News feed', className="navbar-item", href='/'),
+                    html.A('News clustering', className="navbar-item", href='/news_clustering'),
                     html.A('Statistic', className="navbar-item", href='/dash')
                 ])
             ])

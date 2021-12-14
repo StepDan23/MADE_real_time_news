@@ -1,24 +1,16 @@
-from datetime import datetime
 import logging
-import pymongo
 import pandas as pd
-import numpy as np
 import torch
 
-from sklearn.cluster import DBSCAN
+from sklearn.manifold import TSNE
 
 
 TABLE = 'posts'
-TABLE_OUTPUT = 'clusters'
-LIMIT = 1000
+TABLE_OUTPUT = 'tsne'
+LIMIT = 1500
 LOADED = False
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-
-def cluster_job(model, tokenizer, db):
-    for cat in ['not_news', 'sports', 'society', 'economy', 'entertainment', 'other', 'science', 'technology']:
-        cluster(db, cat, tokenizer, model)
 
 
 def embed_bert_cls(text, model, tokenizer):
@@ -35,37 +27,22 @@ def preprocess(text):
     return text
 
 
-def cluster(db, label, tokenizer, model):
+def cluster_job(db, tokenizer, model):
     logger.info('start cluster')
     cursor = db[TABLE] \
-        .find({'predicted_class': label}) \
-        .sort("_id", pymongo.DESCENDING) \
-        .limit(1000)
+        .aggregate([{"$sample": {"size": LIMIT}}])  # select random samples
 
     df = pd.DataFrame.from_records(cursor)
     # Могут проскакивать дубли
     df = df.drop_duplicates('link')
-    transformed_titles = df.title.apply(lambda x: embed_bert_cls(preprocess(x), model, tokenizer))
-    cluster_algo = DBSCAN(min_samples=2, eps=0.15)
-    cluster_labels = cluster_algo.fit_predict(transformed_titles.values.tolist(), )
-    clusters = []
-    for idx_label in range(np.max(cluster_labels) + 1):
-        sources_count = df.iloc[np.where(cluster_labels == idx_label)[0].tolist(), :]['source'].unique().shape[0]
-        if sources_count > 1:
-            clusters.append(idx_label)
-
-    records = []
-    for cluster_label in cluster_labels:
-        # yanews дубли присылают
-        _records = df.iloc[np.where(cluster_labels == cluster_label)[0].tolist(), :].drop_duplicates("source")
-        # Иногда dbscan сходит с ума и делает ультра большой кластер
-        if len(_records) < 20:
-            records.append({
-                'time': datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-                'links': _records['link'].values.tolist(),
-                'titles': _records['title'].values.tolist(),
-                'label': label,
-            })
+    # df['full_text'] = df['title'] + ' ____ ' + df['summary']
+    transformed_titles = df['title'].apply(lambda x: embed_bert_cls(preprocess(x), model, tokenizer))
+    tsne = TSNE(n_components=2, perplexity=170, random_state=0)
+    items_tsne = tsne.fit_transform(transformed_titles.tolist())
+    df['tsne_x'] = items_tsne[:, 0]
+    df['tsne_y'] = items_tsne[:, 1]
+    df = df[['title', 'source', 'tsne_x', 'tsne_y']]
+    records = df.to_dict(orient='records')
     collection = db[TABLE_OUTPUT]
     collection.insert_many(records)
-    logging.info(f'{records}')
+    logging.info(f'clustered with TSNE records: {len(records)}')
