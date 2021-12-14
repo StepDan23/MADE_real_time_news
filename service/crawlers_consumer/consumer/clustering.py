@@ -1,5 +1,4 @@
 import logging
-import pymongo
 import pandas as pd
 import torch
 
@@ -8,7 +7,7 @@ from sklearn.manifold import TSNE
 
 TABLE = 'posts'
 TABLE_OUTPUT = 'tsne'
-LIMIT = 1000
+LIMIT = 3000
 LOADED = False
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,15 +30,13 @@ def preprocess(text):
 def cluster_job(db, tokenizer, model):
     logger.info('start cluster')
     cursor = db[TABLE] \
-        .find() \
-        .sort("_id", pymongo.DESCENDING) \
-        .limit(1000)
-    # .find({'predicted_class': label}) \
+        .aggregate([{"$sample": {"size": LIMIT}}])  # select random samples
 
     df = pd.DataFrame.from_records(cursor)
     # Могут проскакивать дубли
     df = df.drop_duplicates('link')
-    transformed_titles = df.title.apply(lambda x: embed_bert_cls(preprocess(x), model, tokenizer))
+    df['full_text'] = df['title'] + ' ____ ' + df['summary']
+    transformed_titles = df['full_text'].apply(lambda x: embed_bert_cls(preprocess(x), model, tokenizer))
     tsne = TSNE(n_components=2, perplexity=300, metric="cosine", random_state=0)
     items_tsne = tsne.fit_transform(transformed_titles.tolist())
     df['tsne_x'] = items_tsne[:, 0]
