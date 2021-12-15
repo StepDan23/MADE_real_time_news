@@ -83,7 +83,7 @@ def print_hi():
 logger.info("print init scheduler")
 scheduler = BackgroundScheduler()
 scheduler.start()
-scheduler.add_job(cluster_job, 'interval', args=[cluster_model, cluster_tokenizer, mongo[DATABASE]], minutes=5)
+scheduler.add_job(cluster_job, 'interval', args=[mongo[DATABASE], cluster_model, cluster_tokenizer], minutes=5)
 
 
 cache = []
