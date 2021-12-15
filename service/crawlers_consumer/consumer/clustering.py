@@ -23,11 +23,10 @@ def embed_bert_cls(text, model, tokenizer):
 
 
 def preprocess(text):
-    text = str(text).strip().replace("\n", " ").replace("\xa0", " ").lower()
-    return text
+    return str(text).strip().replace("\n", " ").replace("\xa0", " ").lower()
 
 
-def cluster_job(db, tokenizer, model):
+def cluster_job(db, model, tokenizer):
     logger.info('start cluster')
     cursor = db[TABLE] \
         .aggregate([{"$sample": {"size": LIMIT}}])  # select random samples
