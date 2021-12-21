@@ -42,14 +42,14 @@ class Producer:
                         'source': self.source,
                         'parsed_datetime': datetime.now().strftime("%d/%m/%Y %H:%M:%S")
                     }),
-                    news.id,
+                    news.title,
                 )
             self.logger.info(f"Batch with {len(news_feed.entries)} from {self.source}")
             time.sleep(self.timeout)
 
     @cached(cache=LFUCache(maxsize=1024), key=lambda self, msg, msg_id: hashkey(msg_id))
     def _add_to_queue(self, msg, msg_id):
-        """ Добавление сообщения в очередь с хешированием по id. """
+        """ Добавление сообщения в очередь с хешированием по title для источника. """
         connection = self._queue_connection()
         channel = connection.channel()
         hot_channel = self._queue_connection().channel()
