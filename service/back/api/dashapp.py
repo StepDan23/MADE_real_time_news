@@ -67,11 +67,16 @@ def get_source_for_time_split(df, time_limit_minutes='30 min'):
         df.columns = df.columns.droplevel(0)
 
     df = df.sort_index()
+    for column in df.columns:
+        # Костыль, чтобы не смущать людей дробными цифрами
+        df[column] = df[column].astype(int)
+
     return df
 
 
 def update_graph_df(input_df, time_limit_minutes):
-    """update graphs based on given dataframe from database
+    """
+        update graphs based on given dataframe from database
     """
     graph_params = {
         'layout': {
@@ -201,7 +206,7 @@ def create_dash_app(requests_pathname_prefix: str = None) -> dash.Dash:
                 'label': label_value,
             }) \
             .sort("_id", pymongo.DESCENDING) \
-            .limit(400)
+            .limit(1000)
         df = pd.DataFrame.from_records(cursor)
         logger.info(f'get {df.shape} from mongo.')
         return update_graph_df(df, time_limit_minutes)
