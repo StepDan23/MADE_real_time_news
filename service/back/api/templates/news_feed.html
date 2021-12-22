@@ -11,15 +11,16 @@
         {#ul.appendChild(first_li)#}
         let n = 0
         let n_size = 20
-        url = "/api/get_news?"
+        let url = "/api/get_news?"
 
         function createNewsCard(newsCard) {
             var card = document.createElement('div')
 
             var div_title = document.createElement('div')
             div_title.className = "d-flex w-100 justify-content-between"
-            var title = document.createElement('h5')
+            var title = document.createElement('a')
             title.className = "mb-1"
+            title.href = newsCard.link
             title.appendChild(document.createTextNode(newsCard.title));
             div_title.appendChild(title)
             var pred_tag = document.createElement('span')
