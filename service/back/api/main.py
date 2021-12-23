@@ -59,7 +59,7 @@ async def get_news(batch_size: int = 30, n_offset: int = 0):
 
 @app.get('/api/get_news_clusters')
 def get_news_clusters(batch_size: int = 100):
-    news = _get_data_from_mongo(batch_size, n_offset=0, table_name="tsne")
+    news = _get_data_from_mongo(batch_size, n_offset=0, table_name="clustering")
     return news
 
 
