@@ -6,6 +6,7 @@
         const M = 600;
         const xx = [];
         const yy = [];
+        const colors = [];
         const sources = [];
         const labels = [];
         const url = "/api/get_news_clusters?"
@@ -19,8 +20,11 @@
             }
         }).then((response) => {
             response.forEach(newsCard => {
+                const color_id = Math.round(7777777777777777 * newsCard['cluster_id'] / 12);
+
                 xx.push(newsCard['tsne_x']);
                 yy.push(newsCard['tsne_y']);
+                colors.push(plt.color(color_id));
                 sources.push(newsCard['source']);
                 labels.push(newsCard['title']);
             })
@@ -36,8 +40,8 @@
             });
             const circles = p.circle({field: "x"}, {field: "y"}, {
                 source: source,
-                radius: 0.15,
-                fill_color: plt.color(50, 30, 150),
+                radius: 0.25,
+                fill_color: colors,
                 fill_alpha: 0.4,
             });
             const hover = new Bokeh.HoverTool({

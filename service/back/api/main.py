@@ -4,6 +4,7 @@ weighting them and giving final answer
 """
 import logging
 import os
+import re
 
 import pymongo
 from api.dashapp import create_dash_app
@@ -67,9 +68,15 @@ def _get_data_from_mongo_by_time(interval, table_name, db_name="test"):
     return result
 
 
+def _clean_html_tags(json_data):
+    json_data['summary'] = re.sub(r'<[^<]+?>', '', json_data['summary'])
+    return json_data
+
+
 @app.get('/api/get_news')
 async def get_news(batch_size: int = 10, n_offset: int = 0):
     news = _get_data_from_mongo(batch_size, n_offset, table_name="posts")
+    news = [_clean_html_tags(json_data) for json_data in news]
     return news
 
 @app.get('/api/get_news_topic')
@@ -80,7 +87,7 @@ async def get_news(topic: str = 'not_news', batch_size: int = 10, n_offset: int 
 
 @app.get('/api/get_news_clusters')
 def get_news_clusters(batch_size: int = 100):
-    news = _get_data_from_mongo(batch_size, n_offset=0, table_name="tsne")
+    news = _get_data_from_mongo(batch_size, n_offset=0, table_name="clustering")
     return news
 
 
