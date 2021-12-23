@@ -8,18 +8,18 @@ services:
     env_file:
       - real_time.env
     ports:
-      - "8000:8000"
+      - 80:8000
     networks:
       - realtime
     depends_on:
       - rabbitmq
 
-#  telebot:
-#    build: telebot
-#    env_file:
-#      - real_time.env
-#    networks:
-#      - realtime
+  telebot:
+    build: telebot
+    env_file:
+      - real_time.env
+    networks:
+      - realtime
 
   rabbitmq:
     image: rabbitmq:3.8.9-management
