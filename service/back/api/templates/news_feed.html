@@ -7,8 +7,6 @@
 
     <script>
         let ul = document.querySelector('ul')
-        {#let first_li = document.createElement('li')#}
-        {#ul.appendChild(first_li)#}
         let n = 0
         let n_size = 20
         let url = "/api/get_news?"
@@ -51,7 +49,6 @@
                 }
             }).then((data) => {
                 data.forEach(newsCard => {
-                    n += 1
                     var li = document.createElement('li')
                     li.className = "list-group-item list-group-item-action flex-column align-items-start"
                     li.appendChild(createNewsCard(newsCard))
@@ -64,6 +61,7 @@
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     createLi()
+                    n += n_size
                 }
                 observer.unobserve(entry.target)
                 observer.observe(document.querySelector('li:last-child'))
