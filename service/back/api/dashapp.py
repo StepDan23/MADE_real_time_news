@@ -206,7 +206,7 @@ def create_dash_app(requests_pathname_prefix: str = None) -> dash.Dash:
                 'label': label_value,
             }) \
             .sort("_id", pymongo.DESCENDING) \
-            .limit(1000)
+            .limit(40000)
         df = pd.DataFrame.from_records(cursor)
         logger.info(f'get {df.shape} from mongo.')
         return update_graph_df(df, time_limit_minutes)
